@@ -23,7 +23,7 @@ def menu():
               "1) Create a new account\n"
               "2) View your First Name\n"
               "3) View your Last Name\n"
-              "4) View only your email\n"
+              "4) View only your ID Number\n"
               "5) Create a new email\n"
               "6) Update your name\n"
               "7) Delete your info")
@@ -39,7 +39,10 @@ def menu():
                 "email": z,
             }
             response = requests.post(base_url, json=body)
-            print(response.status_code)
+            status = response.status_code
+
+            if status == 200:
+                print("Your account was succesfully created.")
             break
 
         elif selection == "2":
@@ -59,21 +62,23 @@ def menu():
             }
             response = requests.get(base_url, params=user_email)
             info = (response.json())
-            pprint(info['data'][0]['last_name'])
+            pprint(f"Your Last Name is {info['data'][0]['last_name']}")
             break
 
         elif selection == "4":
             x = input("Type your email: ")
-            user_email = {"email": x}
-            response = requests.get(base_url, params=user_email)
+            name_ = {
+                "email": x
+            }
+            response = requests.get(base_url, params=name_)
             info = (response.json())
-            pprint(info['data'][0]['email'])
+            pprint(f"Your ID is: {info['data'][0]['id']}")
             break
 
         elif selection == "5":
             x = int(input("Type your id: "))
-            z = input("first_name: ")
-            a = input("last_name: ")
+            z = input("First Name: ")
+            a = input("Last Name: ")
             y = input("Type your new email: ")
             updated_info = {
                 "id": x,
@@ -82,7 +87,9 @@ def menu():
                 "email": y
             }
             response = requests.put(base_url, json=updated_info)
-            print(response.status_code)
+            status = response.status_code
+            if status == 200:
+                print("Your email has been updated. ")
             response = requests.get(base_url, params=updated_info)
             info = (response.json())
             print(f"Your new email is: {info['data'][0]['email']}")
@@ -90,8 +97,8 @@ def menu():
 
         elif selection == "6":
             x = int(input("Type your id: "))
-            z = input("Update your first name: ")
-            a = input("last_name: ")
+            z = input("Update your First Name: ")
+            a = input("Type your Last Name: ")
             y = input("Type your email: ")
             updated_name = {
                 "id": x,
@@ -104,18 +111,14 @@ def menu():
 
             if status == 200:
                 print("Your first name has beeen updated.")
-
-            response = requests.get(base_url, params=updated_name)
-            info = (response.json())
-            print(f"Your new email is: {info['data'][0]['email']}")
             break
 
         elif selection == "7":
             x = input("Type your id: ")
             response = requests.delete(base_url + "/"+x)
-            print(response.status_code)
-            response = requests.get(base_url)
-            print(response.content)
+            status = response.status_code
+            if status == 200:
+                print(f"Your account has been deleted.")
             break
 
         else:
